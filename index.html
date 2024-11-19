@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Light It Up! Puzzle Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="game-container">
+        <div id="mode-selection">
+            <button onclick="gameController.setMode(15)">C: Beginner (15 tries)</button>
+            <button onclick="gameController.setMode(9)">B: Standard (9 tries)</button>
+            <button onclick="gameController.setMode(7)">A: Expert (7 tries)</button>
+        </div>
+        <div id="puzzle-seed">
+            <input type="number" id="seed-input" placeholder="Input puzzle seed...">
+            <button onclick="gameController.startNewGame()">Start Game</button>
+        </div>
+        <div id="game-board">
+            <!-- 游戏面板将在这里动态生成 -->
+        </div>
+        <div id="game-info">
+            <p id="tries-info"></p>
+            <p id="game-status"></p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
