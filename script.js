@@ -12,10 +12,9 @@ class GameLogic {
     }
     toggleLight(x, y) {
         const index = x * this.size + y;
-        const indicesToToggle = new Set(); // Using a Set to avoid duplicates
-        // Custom toggle logic based on specific button location
+        const indicesToToggle = new Set();
         if (x === 2 && y === 0) {  // 左下角
-            indicesToToggle.add(7); // 左边这一列中间格子
+            indicesToToggle.add(3); // 左边这一列中间格子
             indicesToToggle.add(6); // 左下的格子
             indicesToToggle.add(7); // 最下面一行中间的格子
         } else if (x === 0 && y === 2) { // 右上角
@@ -33,7 +32,6 @@ class GameLogic {
             indicesToToggle.add(2); // 右上的格子
             indicesToToggle.add(4); // 最中间的格子
         } else {
-            // General toggle logic for adjacent lights
             indicesToToggle.add(index); // 自身
             if (x > 0) indicesToToggle.add(index - this.size); // 上
             if (x < this.size - 1) indicesToToggle.add(index + this.size); // 下
@@ -84,14 +82,12 @@ class GameController {
         this.setMode(9);
     }
     setMode(tries) {
+        document.getElementById('game-status').textContent = ""; // 清除成功或失败的消息
         this.gameLogic.resetGame(tries);
         this.gameUI.updateUI();
     }
     startNewGame() {
-        const seed = parseFloat(document.getElementById('seed-input').value);
-        seed && this.gameLogic.resetGame();
-        this.gameLogic.board = Array.from({ length: this.gameLogic.size * this.gameLogic.size },
-            () => Math.random() >= 0.5);
+        this.gameLogic.resetGame();
         this.gameUI.updateUI();
     }
 }
