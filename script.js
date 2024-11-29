@@ -1,3 +1,4 @@
+
 class GameLogic {
     constructor(size = 3) {
         this.size = size;
@@ -5,25 +6,51 @@ class GameLogic {
     }
     
     resetGame(triesAllowed = 9) {
-        // Initialize board with random lights on
         this.board = Array.from({ length: this.size * this.size }, () => Math.random() >= 0.5);
         this.tries = 0;
         this.triesAllowed = triesAllowed;
     }
     toggleLight(x, y) {
         const index = x * this.size + y;
-        const indicesToToggle = [
-            index, index - 1, index + 1, index - this.size, index + this.size
-        ];
+        const indicesToToggle = new Set(); // Using a Set to avoid duplicates
+        // Custom toggle logic based on specific button location
+        if (x === 2 && y === 0) {  // 左下角
+            indicesToToggle.add(7); // 左边这一列中间格子
+            indicesToToggle.add(6); // 左下的格子
+            indicesToToggle.add(7); // 最下面一行中间的格子
+        } else if (x === 0 && y === 2) { // 右上角
+            indicesToToggle.add(5); // 右边这一列中间格子
+            indicesToToggle.add(2); // 右上的格子
+            indicesToToggle.add(1); // 最上面一行中间的格子
+        } else if (x === 1 && y === 0) { // 左边这一列中间的格子
+            indicesToToggle.add(3); // 左边这一列中间格子
+            indicesToToggle.add(6); // 左下的格子
+            indicesToToggle.add(0); // 左上的格子
+            indicesToToggle.add(4); // 最中间的格子
+        } else if (x === 1 && y === 2) { // 右边这一列中间的格子
+            indicesToToggle.add(5); // 右边这一列中间格子
+            indicesToToggle.add(8); // 右下的格子
+            indicesToToggle.add(2); // 右上的格子
+            indicesToToggle.add(4); // 最中间的格子
+        } else {
+            // General toggle logic for adjacent lights
+            indicesToToggle.add(index); // 自身
+            if (x > 0) indicesToToggle.add(index - this.size); // 上
+            if (x < this.size - 1) indicesToToggle.add(index + this.size); // 下
+            if (y > 0) indicesToToggle.add(index - 1); // 左
+            if (y < this.size - 1) indicesToToggle.add(index + 1); // 右
+        }
+        
         indicesToToggle.forEach(i => {
             if (i >= 0 && i < this.size * this.size) {
                 this.board[i] = !this.board[i];
             }
         });
+        
         this.tries++;
     }
     checkWin() {
-        return this.board.every(light => !light);
+        return this.board.every(light => light);
     }
 }
 class GameUI {
@@ -35,7 +62,7 @@ class GameUI {
         gameBoard.innerHTML = ''; 
         this.gameLogic.board.forEach((light, idx) => {
             const button = document.createElement('button');
-            button.textContent = light ? '??' : '';
+            button.textContent = light ? '💡' : '';
             button.onclick = () => {
                 this.gameLogic.toggleLight(Math.floor(idx / this.gameLogic.size), idx % this.gameLogic.size);
                 if(this.gameLogic.checkWin()) {
@@ -64,16 +91,8 @@ class GameController {
         const seed = parseFloat(document.getElementById('seed-input').value);
         seed && this.gameLogic.resetGame();
         this.gameLogic.board = Array.from({ length: this.gameLogic.size * this.gameLogic.size },
-            (_, i) => Math.random() < 0.5);
+            () => Math.random() >= 0.5);
         this.gameUI.updateUI();
     }
 }
 const gameController = new GameController();
-var qrcode = new QRCode(document.getElementById("qrcode"), {
-    text: "http://127.0.0.1:8080",
-    width: 128,
-    height: 128,
-    colorDark : "#000000",
-    colorLight : "#ffffff",
-    correctLevel : QRCode.CorrectLevel.H
-});
